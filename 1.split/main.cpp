@@ -39,7 +39,7 @@ int main()
     cv::Mat result = solve(image);
 
     // show the result image
-    cv::imshow("result", image);
+    cv::imshow("result", result);
 
     return 0;
 }
