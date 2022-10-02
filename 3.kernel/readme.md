@@ -34,6 +34,8 @@ make
 
 如图
 
+![fig](sample.jpg) 
+
 # 提示
 
 1. 创建二值图

@@ -29,6 +29,7 @@ make
 
 如图
 
+![fig](https://github.com/UoN-Lancet/Computer_Vision_Questions/tree/master/1.split) 
 # 提示
 
 上网搜索，研究哪个函数把记录彩色图的 ``cv::Mat`` 变量的数据记录到向量中。
