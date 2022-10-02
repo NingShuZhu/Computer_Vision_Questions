@@ -77,24 +77,41 @@ int main()
 
     cv::Mat colorChannel;
     cv::Mat srcBinLight, srcBinDim;
-    Vec<cv::Mat> channels;       // 通道拆分
+    Vec<cv::Mat> channels;       
 
-    cv::split(src, channels);
+    /* YOUR CODE BEGIN */
+        
+        // 通道拆分，由channels存储
+
+    /* YOUR CODE END */
+    
     colorChannel = channels[2] - channels[0] / 2 - channels[1] / 2;
 
-    cv::threshold(colorChannel, srcBinLight, 70, 255, cv::THRESH_BINARY); // 二值化对应通道
-    cv::threshold(colorChannel, srcBinDim, 40, 255, cv::THRESH_BINARY); // 二值化对应通道
 
-    imagePreProcess(srcBinLight);
-    imagePreProcess(srcBinDim);
+    /* YOUR CODE BEGIN */
 
+        // 二值化对应通道，阈值70，srcBinLight存储结果
+        // 二值化对应通道，阈值40，srcBinDim存储结果
+
+    /* YOUR CODE END */
+     
+    /* YOUR CODE BEGIN */
+
+    //找到本文件中设置好的开闭运算函数，对srcBinLight，srcBinDim变量进行开闭运算。
+    
+    /* YOUR CODE END */
 
     Vec<Vec<cv::Point>> lightContoursLight, lightContoursDim;
     Vec<LightBlob> lightBlobsLight, lightBlobsDim;
     Vec<cv::Vec4i> hierarchy_light, hierarchy_dim;
-    cv::findContours(srcBinLight, lightContoursLight, hierarchy_light, cv::RETR_CCOMP, cv::CHAIN_APPROX_NONE);
-    cv::findContours(srcBinDim, lightContoursDim, hierarchy_dim, cv::RETR_CCOMP, cv::CHAIN_APPROX_NONE);
+    
+    /* YOUR CODE BEGIN */
 
+    //寻找轮廓，存储在93行和94行定义的变量中。
+  
+    /* YOUR CODE END */
+
+    
     for (int i = 0; i < lightContoursLight.size(); i++) {
         if (hierarchy_light[i][2] == -1) {
             cv::RotatedRect rect = cv::minAreaRect(lightContoursLight[i]);
