@@ -41,11 +41,13 @@ int main()
 
     image = imagePreProcess(image);
 
-    // wait for the user to press a key
-    cv::waitKey(0);
+
 
     // show the result image
     cv::imshow("result", image);
+    
+    // wait for the user to press a key    
+    cv::waitKey(0);
 
     return 0;
 }

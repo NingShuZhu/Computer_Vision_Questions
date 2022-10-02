@@ -1,24 +1,40 @@
-#include "LightBlob.hpp"
+#include <iostream>
+#include <opencv2/opencv.hpp>
 
-#include <string>
-#include <vector>
+class LightBlob
+{
+  public:
 
+    cv::RotatedRect rect;   //灯条位置
+    double area_ratio{};
+    double length{};          //灯条长度
+    uint8_t blob_color{};      //灯条颜色
+
+    LightBlob(cv::RotatedRect & r, double ratio, uint8_t color) : rect(r), area_ratio(ratio), blob_color(color)
+    {
+        length = std::max(rect.size.height, rect.size.width);
+    };
+
+    LightBlob() = default;
+};
+typedef std::vector<LightBlob> LightBlobs;
+std::vector<LightBlob> light_blobs;
 void imagePreProcess(cv::Mat & src)
 {
-    static cv::Mat kernelErode = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
-    erode(src, src, kernelErode);
+    static cv::Mat kernel_erode = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
+    erode(src, src, kernel_erode);
 
-    static cv::Mat kernelDilate = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
-    dilate(src, src, kernelDilate);
+    static cv::Mat kernel_dilate = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
+    dilate(src, src, kernel_dilate);
 
-    static cv::Mat kernelDilate2 = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
-    dilate(src, src, kernelDilate2);
+    static cv::Mat kernel_dilate2 = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
+    dilate(src, src, kernel_dilate2);
 
-    static cv::Mat kernelErode2 = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
-    erode(src, src, kernelErode2);
+    static cv::Mat kernel_erode2 = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
+    erode(src, src, kernel_erode2);
 }
 
-static double lwRate(const cv::RotatedRect & rect)
+static double lw_rate(const cv::RotatedRect & rect)
 {
     return rect.size.height > rect.size.width ?
            rect.size.height / rect.size.width :
@@ -26,14 +42,14 @@ static double lwRate(const cv::RotatedRect & rect)
 }
 
 // 轮廓面积和其最小外接矩形面积之比
-static double areaRatio(const Vec<cv::Point> & contour, const cv::RotatedRect & rect)
+static double areaRatio(const std::vector<cv::Point> & contour, const cv::RotatedRect & rect)
 {
     return cv::contourArea(contour) / rect.size.area();
 }
 
-static bool isValidLightBlob(const Vec<cv::Point> & contour, const cv::RotatedRect & rect)
+static bool isValidLightBlob(const std::vector<cv::Point> & contour, const cv::RotatedRect & rect)
 {
-    return (1.2 < lwRate(rect) && lwRate(rect) < 10) &&
+    return (1.2 < lw_rate(rect) && lw_rate(rect) < 10) &&
            //           (rect.isPresent.area() < 3000) &&
            ((rect.size.area() < 50 && areaRatio(contour, rect) > 0.4) ||
             (rect.size.area() >= 50 && areaRatio(contour, rect) > 0.6));
@@ -46,48 +62,43 @@ static bool isSameBlob(const LightBlob & blob1, const LightBlob & blob2)
 }
 
 // 绘制旋转矩形
-void drawRotatedRect(cv::Mat mask, const cv::RotatedRect & rotatedRect,
-    const cv::Scalar & color, int thickness, int lineType)
+void DrawRotatedRect(cv::Mat mask,const cv::RotatedRect &rotatedrect,const cv::Scalar &color,int thickness, int lineType)
 {
     // 提取旋转矩形的四个角点
-    cv::Point2f points[4];
-    rotatedRect.points(points);
+	cv::Point2f ps[4];
+	rotatedrect.points(ps);
 
     // 构建轮廓线
-    Vec<Vec<cv::Point>> tmpContours;    // 创建一个InputArrayOfArrays 类型的点集
-    Vec<cv::Point> contours;
-
-    for (auto & point : points) {
-        contours.emplace_back(cv::Point2i(point));
-    }
-
-    tmpContours.insert(tmpContours.end(), contours);
+	std::vector<std::vector<cv::Point>> tmpContours;    // 创建一个InputArrayOfArrays 类型的点集
+	std::vector<cv::Point> contours;
+	for (int i = 0; i != 4; ++i) {
+		contours.emplace_back(cv::Point2i(ps[i]));
+	}
+	tmpContours.insert(tmpContours.end(), contours);
 
     // 绘制轮廓，即旋转矩形
-    drawContours(mask, tmpContours, 0, color, thickness, lineType);  // 填充mask
+	drawContours(mask, tmpContours, 0, color,thickness, lineType);  // 填充mask
 }
 
 
-int main()
-{
-    std::string imageName = "5_red_1_50cm46.png";
-    cv::Mat src = cv::imread(imageName);
-
-    Vec<LightBlob> lightBlobs;
-
-    cv::Mat colorChannel;
-    cv::Mat srcBinLight, srcBinDim;
-    Vec<cv::Mat> channels;       
-
+int main(){
+   
+    
+    std::string image_name = "5_red_1_50cm46.png";
+    cv::Mat src    = cv::imread(image_name.c_str());
+    
+    cv::Mat color_channel;
+    cv::Mat src_bin_light, src_bin_dim;
+    std::vector<cv::Mat> channels;       // 通道拆分
+    
     /* YOUR CODE BEGIN */
         
         // 通道拆分，由channels存储
 
     /* YOUR CODE END */
     
-    colorChannel = channels[2] - channels[0] / 2 - channels[1] / 2;
-
-
+    color_channel = channels[2] - channels[0] / 2 - channels[1] / 2;
+    
     /* YOUR CODE BEGIN */
 
         // 二值化对应通道，阈值70，srcBinLight存储结果
@@ -100,68 +111,70 @@ int main()
     //找到本文件中设置好的开闭运算函数，对srcBinLight，srcBinDim变量进行开闭运算。
     
     /* YOUR CODE END */
-
-    Vec<Vec<cv::Point>> lightContoursLight, lightContoursDim;
-    Vec<LightBlob> lightBlobsLight, lightBlobsDim;
-    Vec<cv::Vec4i> hierarchy_light, hierarchy_dim;
     
-    /* YOUR CODE BEGIN */
+    
+    
+    std::vector<std::vector<cv::Point>> light_contours_light, light_contours_dim;
+    LightBlobs light_blobs_light, light_blobs_dim;   
+    std::vector<cv::Vec4i> hierarchy_light, hierarchy_dim;        
+     /* YOUR CODE BEGIN */
 
-    //寻找轮廓，存储在93行和94行定义的变量中。
+    //寻找轮廓，存储在118行和119行定义的变量中。
   
     /* YOUR CODE END */
-
     
-    for (int i = 0; i < lightContoursLight.size(); i++) {
+    for (int i = 0; i < light_contours_light.size(); i++) {
         if (hierarchy_light[i][2] == -1) {
-            cv::RotatedRect rect = cv::minAreaRect(lightContoursLight[i]);
-            if (isValidLightBlob(lightContoursLight[i], rect)) {
-                lightBlobsLight.emplace_back(
-                    LightBlob(rect, areaRatio(lightContoursLight[i], rect), LightBlob::Color::BLUE)
+            cv::RotatedRect rect = cv::minAreaRect(light_contours_light[i]);
+            if (isValidLightBlob(light_contours_light[i], rect)) {
+                light_blobs_light.emplace_back(
+                    rect, areaRatio(light_contours_light[i], rect), 0
                 );
             }
         }
     }
 
-    Vec<int> lightToRemove, dimToRemove;
-    for (int l = 0; l != lightBlobsLight.size(); l++) {
-        for (int d = 0; d != lightBlobsDim.size(); d++) {
-            if (isSameBlob(lightBlobsLight[l], lightBlobsDim[d])) {
-                if (lightBlobsLight[l].areaRatio > lightBlobsDim[d].areaRatio) {
-                    dimToRemove.emplace_back(d);
+    std::vector<int> light_to_remove, dim_to_remove;
+    for (int l = 0; l != light_blobs_light.size(); l++) {
+        for (int d = 0; d != light_blobs_dim.size(); d++) {
+            if (isSameBlob(light_blobs_light[l], light_blobs_dim[d])) {
+                if (light_blobs_light[l].area_ratio > light_blobs_dim[d].area_ratio) {
+                    dim_to_remove.emplace_back(d);
                 } else {
-                    lightToRemove.emplace_back(l);
+                    light_to_remove.emplace_back(l);
                 }
             }
         }
     }
+   
+    sort(light_to_remove.begin(), light_to_remove.end(), [](int a, int b) { return a > b; });
+    sort(dim_to_remove.begin(), dim_to_remove.end(), [](int a, int b) { return a > b; });
 
-    sort(lightToRemove.begin(), lightToRemove.end(), [](int a, int b) { return a > b; });
-    sort(dimToRemove.begin(), dimToRemove.end(), [](int a, int b) { return a > b; });
-
-    for (auto x: lightToRemove) {
-        lightBlobsLight.erase(lightBlobsLight.begin() + x);
+    for (auto x: light_to_remove) {
+        light_blobs_light.erase(light_blobs_light.begin() + x);
     }
 
-    for (auto x: dimToRemove) {
-        lightBlobsDim.erase(lightBlobsDim.begin() + x);
+    for (auto x: dim_to_remove) {
+        light_blobs_dim.erase(light_blobs_dim.begin() + x);
     }
 
-    for (const auto & light: lightBlobsLight) {
-        lightBlobs.emplace_back(light);
+    for (const auto & light: light_blobs_light) {
+        light_blobs.emplace_back(light);
     }
 
-    for (const auto & dim: lightBlobsDim) {
-        lightBlobs.emplace_back(dim);
+    for (const auto & dim: light_blobs_dim) {
+        light_blobs.emplace_back(dim);
     }
 
-    for (auto lightBlob: lightBlobs) {
-        drawRotatedRect(src, lightBlob.rect, cv::Scalar(0, 0, 255), 2, 0);
+    for(auto i: light_blobs){
+    	DrawRotatedRect(src,i.rect,cv::Scalar(0,0,255),2, 0);
     }
-
-    cv::imshow("image", src);
+   
+    cv::imshow("1",src); 
     cv::waitKey(0);
-
+    
     return 0;
 
 }
+
+

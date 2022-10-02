@@ -11,7 +11,7 @@ cd 1.split
 
 cmake .
 make 
-./main
+./run
 
 ```
 

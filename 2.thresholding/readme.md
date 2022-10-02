@@ -11,7 +11,7 @@ cd 2.thresholding
 
 cmake .
 make 
-./main
+./run
 
 ```
 

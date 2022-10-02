@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.1)
-project(main)
+project(run)
 
 
 SET(CMAKE_BUILD_TYPE "Debug")

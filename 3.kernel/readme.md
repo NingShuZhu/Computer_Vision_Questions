@@ -10,7 +10,7 @@ cd 3.kernel
 
 cmake .
 make 
-./main
+./run
 
 ```
 

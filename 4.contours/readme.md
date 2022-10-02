@@ -10,7 +10,7 @@ cd 4.contours
 
 cmake .
 make 
-./main
+./run
 
 ```
 
