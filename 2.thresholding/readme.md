@@ -28,7 +28,7 @@ make
 # 输出格式
 
 如图
-
+![fig](https://github.com/UoN-Lancet/Computer_Vision_Questions/blob/master/2.thresholding/sample.jpg) 
 # 提示
 
 先将彩色图转换为灰度图，再用灰度图制作二值图，阈值设为40.
