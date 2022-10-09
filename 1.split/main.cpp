@@ -9,7 +9,8 @@ cv::Mat solve(const cv::Mat& sourceImage)
     std::vector<cv::Mat> channels;
 
     /* YOUR CODE BEGIN */
-
+	
+    cv::split(result, channels);
    
     /* YOUR CODE END */
    
