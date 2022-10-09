@@ -10,8 +10,9 @@ cv::Mat solve(const cv::Mat& sourceImage)
     cv::Mat result = sourceImage.clone();
     
     /* YOUR CODE BEGIN */
+   
     cv::cvtColor(result, result, CV_BGR2GREY); //convert RGB to GREY
-    cv::threshold(result, result, 40);
+    cv::threshold(result, result, 40, 255, THRESH_BINARY); //thresh
 
     /* YOUR CODE END */
     
