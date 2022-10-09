@@ -8,6 +8,9 @@ cv::Mat myBinary(cv::Mat & src)
     cv::Mat rst = src.clone();
     
     /* YOUR CODE BEGIN */
+    
+    cv::cvtColor(rst, rst, CV_BGR2GREY);
+    cv::thershold(rst, rst, 40, 255, THRESH_BINARY);
 
 
     /* YOUR CODE END */
@@ -20,6 +23,13 @@ cv::Mat imagePreProcess(cv::Mat & src)
     cv::Mat resultImage = myBinary(src);
 
     /* YOUR CODE BEGIN */
+    
+    Mat element;
+    element = getStructureingElement(MORPH_RECT, Size(3, 5));
+    
+    morphologyEx(resultImage, resultImage, MORPH_OPEN, element); //OPEN
+    
+    morphologyEx(resultImage, resultImage, MORPH_CLOSE, element); //CLOSE
 
 
     /* YOUR CODE END */
