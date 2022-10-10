@@ -11,6 +11,8 @@ cv::Mat solve(const cv::Mat& sourceImage)
     
     /* YOUR CODE BEGIN */
 
+    cv::cvtColor(result, result, cv::COLOR_BGR2GRAY); //convert RGB to GREY
+    cv::threshold(result, result, 40, 255, cv::THRESH_BINARY); //thresh
 
     /* YOUR CODE END */
     
@@ -30,15 +32,15 @@ int main()
     
     // show the original image
     cv::imshow("original", image);
-
-    // wait for the user to press a key
-    cv::waitKey(0);
-
+   
     // call the solve function
     cv::Mat result = solve(image);
 
     // show the result image
     cv::imshow("result", result);
+   
+    // wait for the user to press a key
+    cv::waitKey(0);
    
     return 0;
 }
