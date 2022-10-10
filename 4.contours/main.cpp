@@ -9,6 +9,8 @@ cv::Mat myBinary(cv::Mat& src)
 
     /* YOUR CODE BEGIN */
 
+    cv::cvtColor(resultImage, resultImage, cv::COLOR_BGR2GRAY);
+    cv::threshold(resultImage, resultImage, 40, 255, cv::THRESH_BINARY);
 
     /* YOUR CODE END */
 
@@ -21,6 +23,11 @@ cv::Mat imagePreProcess(cv::Mat& src)
 
     /* YOUR CODE BEGIN */
 
+    cv::Mat element;
+    element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
+
+    cv::morphologyEx(resultImage, resultImage, cv::MORPH_OPEN, element);
+    cv::morphologyEx(resultImage, resultImage, cv::MORPH_CLOSE, element);
 
     /* YOUR CODE END */
 
@@ -35,7 +42,8 @@ std::vector<std::vector<cv::Point>> myFindContour(cv::Mat& src)
     std::vector<std::vector<cv::Point>> contours;
 
     /* YOUR CODE BEGIN */
-
+    
+    cv::findContours(rst, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
     /* YOUR CODE END */
 
