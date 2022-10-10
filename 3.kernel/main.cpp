@@ -9,9 +9,8 @@ cv::Mat myBinary(cv::Mat & src)
     
     /* YOUR CODE BEGIN */
     
-    cv::cvtColor(rst, rst, CV_BGR2GREY);
-    cv::thershold(rst, rst, 40, 255, THRESH_BINARY);
-
+    cv::cvtColor(rst, rst, cv::COLOR_BGR2GRAY);
+    cv::threshold(rst, rst, 85, 255, cv::THRESH_BINARY);
 
     /* YOUR CODE END */
 
@@ -24,13 +23,12 @@ cv::Mat imagePreProcess(cv::Mat & src)
 
     /* YOUR CODE BEGIN */
     
-    Mat element;
-    element = getStructureingElement(MORPH_RECT, Size(3, 5));
-    
-    morphologyEx(resultImage, resultImage, MORPH_OPEN, element); //OPEN
-    
-    morphologyEx(resultImage, resultImage, MORPH_CLOSE, element); //CLOSE
+    cv::Mat element;
+    element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
 
+    morphologyEx(resultImage, resultImage, cv::MORPH_OPEN, element); //OPEN
+   
+    morphologyEx(resultImage, resultImage, cv::MORPH_CLOSE, element); //CLOSE
 
     /* YOUR CODE END */
 
