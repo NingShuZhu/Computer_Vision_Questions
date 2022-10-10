@@ -33,14 +33,14 @@ int main()
     // show the original image
     cv::imshow("original", image);
 
-    // wait for the user to press a key
-    cv::waitKey(0);
-
     // call the solve function
     cv::Mat result = solve(image);
 
     // show the result image
     cv::imshow("result", result);
+	
+    // wait for the user to press a key
+    cv::waitKey(0);
 
     return 0;
 }
