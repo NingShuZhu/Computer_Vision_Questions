@@ -26,9 +26,9 @@ cv::Mat imagePreProcess(cv::Mat & src)
     cv::Mat element;
     element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
 
-    morphologyEx(resultImage, resultImage, cv::MORPH_OPEN, element); //OPEN
+    cv::morphologyEx(resultImage, resultImage, cv::MORPH_OPEN, element); //OPEN
    
-    morphologyEx(resultImage, resultImage, cv::MORPH_CLOSE, element); //CLOSE
+    cv::morphologyEx(resultImage, resultImage, cv::MORPH_CLOSE, element); //CLOSE
 
     /* YOUR CODE END */
 
